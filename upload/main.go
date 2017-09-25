@@ -11,8 +11,8 @@ import ( //"github.com/aws/aws-sdk-go/service/s3"
 )
 
 func main() {
-	accesid := "AKIAIOHZVBINWEK35PZA"//os.Getenv("s3accessid") ////
-	accesskey := "I2ia8U3QQsQO8eF6Rce/P259ovcdl9JNBV8lIXLv"//os.Getenv("secretacceskey") ////
+	accesid := "AKIAIOHZVBINWEK35PZA"                       //os.Getenv("s3accessid") ////
+	accesskey := "I2ia8U3QQsQO8eF6Rce/P259ovcdl9JNBV8lIXLv" //os.Getenv("secretacceskey") ////
 	token := ""
 	cred := credentials.NewStaticCredentials(accesid, accesskey, token)
 	conf := aws.NewConfig()
@@ -22,12 +22,12 @@ func main() {
 	upload := s3manager.NewUploader(sess)
 	f, err := os.Open("file")
 	if err != nil {
-		fmt.Print("open:",err)
+		fmt.Print("open:", err)
 	}
-		upoadinput := s3manager.UploadInput{Bucket: aws.String("jenkins19"), Body: f,Key:aws.String("a")}
+	upoadinput := s3manager.UploadInput{Bucket: aws.String("jenkins19"), Body: f, Key: aws.String("a")}
 	_, err = upload.Upload(&upoadinput)
 	if err != nil {
-		fmt.Print("upload",err)
+		fmt.Print("upload", err)
 	}
 
 }
