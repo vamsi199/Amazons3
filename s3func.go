@@ -16,7 +16,7 @@ type file struct {
 	Filename , Bucketname ,Objectname string
 }
 
-/*func Configuration()  {
+func Configuration() *aws.Config {
 	accesid := "AKIAIOHZVBINWEK35PZA"                       //os.Getenv("s3accessid") ////
 	accesskey := "I2ia8U3QQsQO8eF6Rce/P259ovcdl9JNBV8lIXLv" //os.Getenv("secretacceskey") ////
 	token := ""
@@ -25,7 +25,7 @@ type file struct {
 	conf.Credentials = cred
 	conf.Region = aws.String("us-east-1")
 	return conf
-}*/
+}
 func Uploadobject(w http.ResponseWriter, req *http.Request) {
 	var file1 file
 	params := req.URL.Query()
@@ -33,20 +33,14 @@ func Uploadobject(w http.ResponseWriter, req *http.Request) {
 	file1.Bucketname=params["bucketname"][0]
 	file1.Objectname=params["objectname"][0]
 	fmt.Fprintln(w,file1)
-	accesid := "AKIAIOHZVBINWEK35PZA"                       //os.Getenv("s3accessid") ////
-	accesskey := "I2ia8U3QQsQO8eF6Rce/P259ovcdl9JNBV8lIXLv" //os.Getenv("secretacceskey") ////
-	token := ""
-	cred := credentials.NewStaticCredentials(accesid, accesskey, token)
-	conf := aws.NewConfig()
-	conf.Credentials = cred
-	conf.Region = aws.String("us-east-1")
-	sess := session.Must(session.NewSession(conf))
+	sess := session.Must(session.NewSession(Configuration()))
 	upload := s3manager.NewUploader(sess)
 	file := file1.Filename
 	f, err := os.Open(file)
 	if err != nil {
 		fmt.Print("open:", err)
 	}
+	defer f.Close()
 	buckname := file1.Bucketname
 	objname := file1.Objectname
 	upoadinput := s3manager.UploadInput{Bucket: aws.String(buckname), Body: f, Key: aws.String(objname)}
@@ -62,14 +56,7 @@ func Listobject(w http.ResponseWriter, req *http.Request) {
 	var file1 file
 	params := req.URL.Query()
 	file1.Bucketname=params["bucketname"][0]
-	accesid := "AKIAIOHZVBINWEK35PZA"                       //os.Getenv("s3accessid") ////
-	accesskey := "I2ia8U3QQsQO8eF6Rce/P259ovcdl9JNBV8lIXLv" //os.Getenv("secretacceskey") ////
-	token := ""
-	cred := credentials.NewStaticCredentials(accesid, accesskey, token)
-	conf := aws.NewConfig()
-	conf.Region = aws.String("us-east-1")
-	conf.Credentials = cred
-	svc := s3.New(session.New(conf))
+	svc := s3.New(session.New(Configuration()))
 	buckname := file1.Bucketname
 	listobj, err := svc.ListObjects(&s3.ListObjectsInput{Bucket: aws.String(buckname)})
 	if err != nil {
@@ -86,14 +73,7 @@ func Deleteobj(w http.ResponseWriter, req *http.Request) {
 	file1.Bucketname=params["bucketname"][0]
 	file1.Objectname=params["objectname"][0]
 	fmt.Fprintln(w,file1)
-	accesid := "AKIAIOHZVBINWEK35PZA"                       //os.Getenv("s3accessid") ////
-	accesskey := "I2ia8U3QQsQO8eF6Rce/P259ovcdl9JNBV8lIXLv" //os.Getenv("secretacceskey") ////
-	token := ""
-	cred := credentials.NewStaticCredentials(accesid, accesskey, token)
-	conf := aws.NewConfig()
-	conf.Region = aws.String("us-east-1")
-	conf.Credentials = cred
-	svc := s3.New(session.New(conf))
+	svc := s3.New(session.New(Configuration()))
 	buckname := file1.Bucketname
 	objname := file1.Objectname
 	deleteout, err := svc.DeleteObject(&s3.DeleteObjectInput{
@@ -113,14 +93,7 @@ func Downloadobj(w http.ResponseWriter, req *http.Request) {
 	file1.Bucketname=params["bucketname"][0]
 	file1.Objectname=params["objectname"][0]
 	fmt.Fprintln(w,file1)
-	accesid := "AKIAIOHZVBINWEK35PZA"                       //os.Getenv("s3accessid") ////
-	accesskey := "I2ia8U3QQsQO8eF6Rce/P259ovcdl9JNBV8lIXLv" //os.Getenv("secretacceskey") ////
-	token := ""
-	cred := credentials.NewStaticCredentials(accesid, accesskey, token)
-	conf := aws.NewConfig()
-	conf.Region = aws.String("us-east-1")
-	conf.Credentials = cred
-	sess := session.Must(session.NewSession(conf))
+	sess := session.Must(session.NewSession(Configuration()))
 	downloader := s3manager.NewDownloader(sess)
 	f, err := os.Create("file")
 	if err != nil {
